@@ -1,0 +1,28 @@
+{% if flash %}
+  <div class="fixed top-4 right-4 z-50 max-w-md animate-slide-in">
+    <div class="{% if flash.type == 'success' %}bg-green-50 border-green-200 text-green-800{% else %}bg-red-50 border-red-200 text-red-800{% endif %} border rounded-lg p-4 shadow-lg">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+          {% if flash.type == 'success' %}
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+          {% else %}
+            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
+          {% endif %}
+        </div>
+        <div class="flex-1">
+          <p class="font-medium">{{ flash.message }}</p>
+        </div>
+        <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      const flash = document.querySelector('.animate-slide-in');
+      if (flash) flash.remove();
+    }, 5000);
+  </script>
+{% endif %}

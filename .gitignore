@@ -1,0 +1,49 @@
+# ======================================
+# PHP + Twig Project .gitignore
+# ======================================
+
+# Composer dependencies
+/vendor/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Logs and cache
+*.log
+/tmp/
+logs/
+cache/
+storage/
+sessions/
+*.cache
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/project settings
+.idea/
+.vscode/
+*.swp
+
+# PHPUnit / test files
+.phpunit.result.cache
+coverage/
+tests/_output/
+
+# Build artifacts
+node_modules/
+dist/
+build/
+
+# Misc
+*.bak
+*.tmp
+*.old
+
+# If you use Docker locally
+docker-compose.yml
+.dockerignore

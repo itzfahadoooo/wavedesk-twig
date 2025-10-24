@@ -1,0 +1,58 @@
+<div class="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 hover:shadow-md transition">
+  <div class="flex items-start justify-between mb-4">
+    <div class="flex-1">
+      <h3 class="text-lg font-bold text-gray-900">{{ ticket.title }}</h3>
+      <p class="text-gray-600 text-sm mt-1">{{ ticket.description }}</p>
+    </div>
+    <div class="flex gap-2 ml-4">
+      <button
+        onclick="openEditModal({{ ticket.id }}, '{{ ticket.title|e('js') }}', '{{ ticket.description|e('js') }}', '{{ ticket.status }}', '{{ ticket.priority }}')"
+        class="p-2 hover:bg-blue-50 rounded-lg transition text-blue-600 cursor-pointer"
+        aria-label="Edit ticket"
+      >
+        <i data-lucide="edit-2" class="w-4 h-4"></i>
+      </button>
+      <button
+        onclick="confirmDelete({{ ticket.id }}, '{{ ticket.title|e('js') }}')"
+        class="p-2 hover:bg-red-50 rounded-lg transition text-red-600 cursor-pointer"
+        aria-label="Delete ticket"
+      >
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <div class="flex gap-2">
+      <span class="px-3 py-1 rounded-full text-xs font-medium
+        {% if ticket.status == 'open' %}
+          bg-green-200 text-green-800
+        {% elseif ticket.status == 'in_progress' %}
+          bg-amber-200 text-amber-800
+        {% else %}
+          bg-gray-200 text-gray-800
+        {% endif %}
+      ">
+        {% if ticket.status == 'open' %}
+          open
+        {% elseif ticket.status == 'in_progress' %}
+          in progress
+        {% else %}
+          closed
+        {% endif %}
+      </span>
+      <span class="px-3 py-1 rounded-full text-xs font-medium capitalize
+        {% if ticket.priority == 'high' %}
+          text-red-600
+        {% elseif ticket.priority == 'medium' %}
+          text-amber-600
+        {% else %}
+          text-blue-600
+        {% endif %}
+      ">
+        {{ ticket.priority }}
+      </span>
+    </div>
+    <p class="text-xs text-gray-500">{{ ticket.created_at|date('n/j/Y') }}</p>
+  </div>
+</div>

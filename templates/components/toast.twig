@@ -1,0 +1,41 @@
+{# 
+  Props:
+  - toasts: [
+      { id, message, type } 
+      where type ∈ ('success', 'error', 'info')
+    ]
+#}
+
+<div class="fixed bottom-4 right-4 z-50 space-y-2">
+  {% for toast in toasts %}
+    {% set bgClass = 
+      toast.type == 'success' ? 'bg-green-500' :
+      toast.type == 'error' ? 'bg-red-500' :
+      'bg-blue-500'
+    %}
+
+    <div
+      class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white animate-in fade-in slide-in-from-bottom-4 duration-300 {{ bgClass }}"
+      role="alert"
+      data-toast-id="{{ toast.id }}"
+    >
+      {% if toast.type == 'success' %}
+        <span class="w-5 h-5">✔️</span>
+      {% elseif toast.type == 'error' %}
+        <span class="w-5 h-5">⚠️</span>
+      {% elseif toast.type == 'info' %}
+        <span class="w-5 h-5">ℹ️</span>
+      {% endif %}
+
+      <span class="flex-1">{{ toast.message }}</span>
+
+      <button
+        class="hover:opacity-80 transition"
+        aria-label="Close notification"
+        data-toast-close="{{ toast.id }}"
+      >
+        ✖
+      </button>
+    </div>
+  {% endfor %}
+</div>

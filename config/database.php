@@ -11,13 +11,27 @@ class Database {
     public static function getConnection(): PDO {
         if (self::$instance === null) {
             try {
-                // Get database configuration from environment variables
-                $host = getenv('DB_HOST') ?: 'localhost';
-                $dbname = getenv('DB_NAME') ?: 'wavedesk';
-                $username = getenv('DB_USER') ?: 'root';
-                $password = getenv('DB_PASS') ?: '';
+                // Check if we have a DATABASE_URL (Render provides this)
+                $databaseUrl = getenv('DATABASE_URL');
+                
+                if ($databaseUrl) {
+                    // Parse DATABASE_URL (format: postgresql://user:password@host:port/database)
+                    $url = parse_url($databaseUrl);
+                    $host = $url['host'];
+                    $port = $url['port'] ?? 5432;
+                    $dbname = ltrim($url['path'], '/');
+                    $username = $url['user'];
+                    $password = $url['pass'];
+                } else {
+                    // Use individual environment variables (local development)
+                    $host = getenv('DB_HOST') ?: 'localhost';
+                    $port = getenv('DB_PORT') ?: '5432';
+                    $dbname = getenv('DB_NAME') ?: 'wavedesk';
+                    $username = getenv('DB_USER') ?: 'postgres';
+                    $password = getenv('DB_PASS') ?: '';
+                }
 
-                $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
+                $dsn = "pgsql:host={$host};port={$port};dbname={$dbname}";
                 
                 self::$instance = new PDO($dsn, $username, $password, [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

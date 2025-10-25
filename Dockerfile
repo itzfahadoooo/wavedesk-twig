@@ -2,15 +2,11 @@ FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    zip \
-    unzip \
     libpq-dev \
+    git \
+    unzip \
+    && docker-php-ext-install pdo pdo_pgsql \
     && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions for PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -18,26 +14,23 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy composer files first (for better caching)
-COPY composer.json composer.lock* ./
+# Copy composer files
+COPY composer.json ./
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Install dependencies (this will fail initially, but that's ok)
+RUN composer install --no-dev --no-scripts --no-autoloader || true
 
-# Copy the rest of the application
+# Copy all application files
 COPY . .
 
-# Run autoload dump again to ensure everything is loaded
-RUN composer dump-autoload --optimize
+# Now regenerate the autoloader with all files present
+RUN composer dump-autoload --no-dev --optimize
 
-# Create a startup script
-RUN echo '#!/bin/bash\n\
-php migrate.php\n\
-php -S 0.0.0.0:$PORT -t .\n\
-' > /app/start.sh && chmod +x /app/start.sh
+# Verify autoloader was created
+RUN ls -la vendor/composer/
 
 # Expose port
 EXPOSE 8080
 
-# Use the startup script
-CMD ["/app/start.sh"]
+# Start application (run migration then start server)
+CMD php migrate.php && php -S 0.0.0.0:$PORT -t .

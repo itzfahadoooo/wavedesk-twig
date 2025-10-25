@@ -15,22 +15,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 # Copy composer files
-COPY composer.json ./
+COPY composer.json composer.lock* ./
 
-# Install dependencies (this will fail initially, but that's ok)
-RUN composer install --no-dev --no-scripts --no-autoloader || true
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader
 
 # Copy all application files
 COPY . .
 
-# Now regenerate the autoloader with all files present
+# Regenerate autoloader with all files
 RUN composer dump-autoload --no-dev --optimize
-
-# Verify autoloader was created
-RUN ls -la vendor/composer/
 
 # Expose port
 EXPOSE 8080
 
-# Start application (run migration then start server)
+# Start application
 CMD php migrate.php && php -S 0.0.0.0:$PORT -t .

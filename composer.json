@@ -3,6 +3,7 @@
     "description": "WaveDesk Ticket Management System",
     "type": "project",
     "require": {
+        "php": ">=8.0",
         "twig/twig": "^3.0"
     },
     "autoload": {
@@ -10,5 +11,14 @@
             "App\\": "src/",
             "App\\Config\\": "config/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@php migrate.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
     }
 }

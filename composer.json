@@ -14,11 +14,6 @@
             "App\\Config\\": "config/"
         }
     },
-    "scripts": {
-        "post-install-cmd": [
-            "@php migrate.php"
-        ]
-    },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist"
